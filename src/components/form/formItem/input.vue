@@ -4,7 +4,7 @@
  * @Autor: longyunfei
  * @Date: 2020-12-23 15:17:37
  * @LastEditors: longyunfei
- * @LastEditTime: 2020-12-28 11:35:06
+ * @LastEditTime: 2020-12-29 11:18:10
 -->
 <template>
   <div class="item-input">
@@ -50,6 +50,9 @@ export default {
       },
   },
   created() {
+    this.Val = this.value
+  },
+  updated() {
     this.Val = this.value
   },
   methods: {

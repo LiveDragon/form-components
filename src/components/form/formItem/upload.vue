@@ -4,7 +4,7 @@
  * @Autor: longyunfei
  * @Date: 2020-12-25 17:13:14
  * @LastEditors: longyunfei
- * @LastEditTime: 2020-12-28 13:39:08
+ * @LastEditTime: 2020-12-29 13:55:53
 -->
 <template>
   <div class="item-upload">
@@ -95,6 +95,7 @@ export default {
       return false
     },
     async successUpload(response, file, fileList) {
+      this.Val = response.data
       await this.handleSuccess(response, file, fileList)
       this.$emit('resetItemValidate',this.ruleProp)
     }

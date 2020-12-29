@@ -4,7 +4,7 @@
  * @Autor: longyunfei
  * @Date: 2020-12-23 16:49:59
  * @LastEditors: longyunfei
- * @LastEditTime: 2020-12-28 13:37:59
+ * @LastEditTime: 2020-12-28 18:17:49
 -->
 <template>
   <div class="item-select">
@@ -14,7 +14,7 @@
         @clear="clear?clear():none()" 
         @blur="blur?blur():none()"
         @focus="focus?focus():none()"
-        @change="change?change():none()"
+        @change="selectChange()"
     >
     <el-option 
         v-for="(items,index) in option" 
@@ -44,6 +44,10 @@ export default {
       type: Function,
       default: () => () => {}
     },
+    ruleProp: {
+      type: String,
+      default: () => ''
+    },
     change: {
       type: Function,
       default: () => () => {}
@@ -66,6 +70,10 @@ export default {
     none () {
       return false
     },
+    async selectChange() {
+      await this.change()
+      this.$emit('resetItemValidate',this.ruleProp)
+    }
   },
   created() {
   }

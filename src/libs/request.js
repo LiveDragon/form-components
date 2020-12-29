@@ -4,7 +4,7 @@
  * @Autor: longyunfei
  * @Date: 2020-12-28 11:10:35
  * @LastEditors: longyunfei
- * @LastEditTime: 2020-12-28 11:46:55
+ * @LastEditTime: 2020-12-29 13:55:34
  */
 import axios from 'axios'
 import qs from 'qs'
@@ -12,7 +12,7 @@ import qs from 'qs'
 import { Message } from 'element-ui';
 
 // const baseUrl = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
-const baseUrl = '你的上传文件接口'
+const baseUrl = '后台地址'
 /**
  * 创建axios实例
  * @type {AxiosInstance}

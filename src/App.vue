@@ -4,12 +4,26 @@
  * @Autor: longyunfei
  * @Date: 2020-12-23 15:08:31
  * @LastEditors: longyunfei
- * @LastEditTime: 2020-12-28 11:39:38
+ * @LastEditTime: 2020-12-29 13:56:37
 -->
 <template>
   <div id="app">
-    <comForm ref="testForm" :formIpt="formIpt" :formRule="formRule" :fromClass="fromClass"  />
-      <el-button @click="btnClick" type="primary">主要按钮</el-button>
+    <comForm ref="searcForm" :formIpt="searchIpt" :formRule="searchRule" :searchFunc="searchFunc"  />
+    
+    <el-dialog
+    width="60%"
+    :title="dialogInfo.title"
+    :visible.sync="dialogInfo.dialogFlag"
+    :destroy-on-close="true"
+    @close="closeDialog"
+    >
+      <comForm v-if="dialogInfo.dialogFlag" ref="testForm" :formIpt="formIpt" :formRule="formRule" :fromClass="fromClass" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button type="primary" @click="dialogConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+      <!-- <el-button @click="btnClick" type="primary">主要按钮</el-button> -->
   </div>
 </template>
 
@@ -31,6 +45,46 @@ export default {
     }
     return {
       Val: '',
+      searchIpt: [
+        {
+          type: "Input",
+          models: "",
+          label: '查询条件1',
+          ruleProp: '',
+          placeholder: "我是查询条件1",
+          clearable: true,
+        },
+        {
+          type: "Input",
+          models: "",
+          label: '查询条件2',
+          ruleProp: '',
+          placeholder: "我是查询条件1",
+          clearable: true,
+        },
+        {
+          type: "Input",
+          models: "",
+          label: '查询条件3',
+          ruleProp: '',
+          placeholder: "我是查询条件1",
+          clearable: true,
+        },
+        {
+          type: "DatePicker",
+          mold: "datetime",
+          models: "",
+          label: '查询条件4',
+          ruleProp: '',
+          placeholder: "我是查询条件4",
+          clearable: true,
+        },
+      ],
+      searchRule: {
+        model: {},
+        refName: 'searcForm',
+        rule: {}
+      },
       formIpt: [
         {
           type: "Input",
@@ -39,7 +93,7 @@ export default {
           ruleProp: 'label1',
           placeholder: "我是默认值",
           clearable: true,
-          blur: this.blur,
+          focus: this.focus,
         },
         {
           type: "Select",
@@ -55,6 +109,7 @@ export default {
             }
           ],
           blur: this.blur,
+          change: this.change,
         },
         {
           type: "DatePicker",
@@ -71,22 +126,18 @@ export default {
           models: "",
           label: '文件上传',
           ruleProp: 'label5',
-          action: "你的上传文件接口/uploadFormData",
-          // action: "http://180.101.236.58:9071/ht/policy/upload",
+          action: "上传文件接口地址",
           handleBeforeUpload: this.handleBeforeUpload,
           handleSuccess: this.handleSuccess,
           handleError: this.handleError,
         },
         {
           type: "Editor",
-          models: "<p>测试原始数据</p>",
+          models: "",
           label: '富文本编辑器',
           ruleProp: 'label88',
-          action: "你的上传文件接口/uploadFormData",
-          // action: "http://180.101.236.58:9071/ht/policy/upload",
-          handleBeforeUpload: this.handleBeforeUpload,
-          handleSuccess: this.handleSuccess,
-          handleError: this.handleError,
+          action: "上传文件接口地址",
+          span: 24
         },
       ],
       formRule: {
@@ -115,18 +166,36 @@ export default {
             { required: true, message: '请选择内容', trigger: 'blur' }
           ],
           label88: [
-            { required: true, message: '请选择输入富文本编辑器内容', trigger: 'change' }
+            { required: true, message: '请输入富文本编辑器内容', trigger: 'change' },
+            //  { required: true, validator: valiVal, trigger: 'change' }
           ]
         }
       },
       fromClass: {
-        isColumn: false
-      }
+        isColumn: true
+      },
+      searchFunc: {
+        // 查询方法
+        query: this.query,
+        reset: this.reset,
+        add: this.add,
+        queryText: '搜索',
+        resetText: '重置',
+        addText: '新增',
+      },
+      dialogInfo: {
+        dialogFlag: false,
+        title: '',
+        type: ''
+      },
     }
   },
   methods: {
-    blur() {
-      console.log('==============================')
+    focus() {
+      console.log('---------------------------','获得焦点')
+    },
+    change() {
+      console.log('---------------------------','下拉框')
     },
     handleBeforeUpload(file) {
       console.log(file)
@@ -135,28 +204,38 @@ export default {
       console.log(response)
       console.log(file)
       console.log(fileList)
-      this.formIpt[3].models = "你的上传文件接口/" + response.data
-      // this.$nextTick(() => {
-      //   this.$refs.testForm.$refs.testForm.validateField('label5')
-      // })
-      
-      // setTimeout(() => {
-      //   this.formIpt[3].models = ''
-      // },2000)
     },
     handleError(err, file, fileList) {
       console.log(err)
       console.log(file)
       console.log(fileList)
     },
-    btnClick() {
+    dialogConfirm() {
       console.log(this.$refs.testForm.$refs.testForm)
-      this.$refs.testForm.$refs.testForm.validate()
-      // this.$refs[this.$props.formRule.refName].validate((valid) => {
-      //     if (valid) {
-      //       func()
-      //     }
-      //   })
+      // this.$refs.testForm.$refs.testForm.validate()
+     this.$refs.testForm.$refs.testForm.validate((valid) => {
+          if (valid) {
+            this.$message({
+              message: '新增成功',
+              type: 'success'
+            })
+            this.dialogInfo.dialogFlag = false
+          }
+        })
+    },
+    query() {
+      console.log('查询')
+    },
+    reset() {
+      console.log('重置')
+    },
+    add() {
+      console.log('新增')
+      this.dialogInfo.title = '新增'
+      this.dialogInfo.dialogFlag = true
+    },
+    closeDialog() {
+      this.dialogInfo.dialogFlag = false
     }
   }
 }
